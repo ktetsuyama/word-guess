@@ -19,7 +19,7 @@ var lossesEl = document.querySelector(".scoreboard__score__value--losses");
 var timerEl = document.querySelector(".gameboard__timer");
 var startGameButtonEl = document.querySelector(".controls__playgame");
 var gameboardEl = document.querySelector(".gameboard");
-var gameresultEl = document.querySelector(".gameboard__result");
+var gameResultEl = document.querySelector(".gameboard__result");
 var gameDisplayEl = document.querySelector(".gameboard__display");
 var controlsEl = document.querySelector(".controls");
 
@@ -43,7 +43,7 @@ var losses = 0;
 var timer = null;
 var timeLeft = 0;
 var currentWordIndex;
-var currentGuess;
+var currentGuess = [];
 
 /*
  4. Declare variables: constants
@@ -62,6 +62,8 @@ var kWordList = [
 ];
 
 var kDuration = 20;
+var kStorageKey = "Word-guess-game-scores";
+var kAllowedKeys = "abcdefghijklmnopqrstuvwxyz";
 
 /*
  5. Identify events
@@ -82,31 +84,147 @@ var kDuration = 20;
 //Event: Page load
 function init() {
 	console.log("Game loading...");
+
+	//retrieve data from persistance
+	var scores = JSON.parse(localStorage.getItem(kStorageKey));
+	//Update state
+	if (scores) {
+		wins = scores.wins;
+		losses = scores.losses;
+	}
+
+	//update UI
+	updateScoreBoard();
 }
 
 //Event: Click start
 function handleClickStart(event) {
 	console.log("Game started!");
+
+	if (!timer) {
+		//set time left
+		timeLeft = kDuration;
+		//start timer
+		timer = setInterval(handleTimerTick, 1000);
+		//choose a word from the list
+		currentWordIndex = Math.floor(Math.random() * kWordList.length);
+		//set the current guess
+		currentGuess = new Array(kWordList[currentWordIndex].length).fill("_");
+
+		timerEl.textContent = timeLeft;
+
+		//hide start button
+		hideElement(controlsEl);
+		/////////////////////////////
+		//reset the display
+		//hide any result  messages
+		hideElement(gameResultEl);
+		//show gameboard
+		showElement(gameboardEl);
+		//show timer
+		showElement(timerEl);
+		//show word display
+		updateWordDisplay();
+	}
 }
 startGameButtonEl.addEventListener("click", handleClickStart);
 //Event: Timer tick
-function handleTimeTick(event) {
+function handleTimerTick(event) {
 	console.log("timer ticked!");
+	timeLeft--;
+
+	timerEl.textContent = timeLeft;
+	if (timeLeft === 0) {
+		handleGameEnds(false);
+	}
 }
 
 //Event: Type letter
 function handleKeyDown(event) {
 	console.log("key pressed: ", event.key);
+
+	if (timer && kAllowedKeys.includes(event.key)) {
+		if (
+			!currentGuess.includes(event.key) &&
+			kWordList[currentWordIndex].includes(event.key)
+		) {
+			currentGuess = kWordList[currentWordIndex]
+				.split("")
+				.map(function (letter, index) {
+					if (letter === event.key) {
+						return letter;
+					}
+
+					return currentGuess[index];
+				});
+		}
+		//update ui
+		updateWordDisplay();
+
+		if (currentGuess.join("") === kWordList[currentWordIndex]) {
+			handleGameEnds(true);
+		}
+	}
 }
 document.addEventListener("keydown", handleKeyDown);
 
 //Event: Game ends
-function handleGameEnds() {}
+function handleGameEnds(didWin) {
+	clearInterval(timer);
+	timer = null;
+
+	if (didWin) {
+		wins++;
+	} else {
+		losses++;
+	}
+
+	localStorage.setItem(kStorageKey, JSON.stringify({ wins, losses }));
+
+	//udpate ui
+
+	//display result message
+	displayResult(didWin);
+	updateScoreBoard();
+	showElement(controlsEl);
+}
 /*
  6. Refactor
     - identify tasks that can be broken into their own functions, outside the event handlers
     - Are there tasks that more than one event handler share?
 */
+function updateScoreBoard() {
+	//updated ui
+	winsEl.textContent = wins;
+	lossesEl.textContent = losses;
+}
+
+function hideElement(el) {
+	el.classList.add("hide");
+}
+
+function showElement(el) {
+	el.classList.remove("hide");
+}
+
+function displayResult(didWin) {
+	gameResultEl.classList.remove("success");
+	gameResultEl.classList.remove("failure");
+	hideElement(timerEl);
+
+	if (didWin) {
+		gameResultEl.textContent = "You Win!";
+		gameResultEl.classList.add("success");
+	} else {
+		gameResultEl.textContent = "You Lost!";
+		gameResultEl.classList.add("failure");
+	}
+	showElement(gameResultEl);
+}
+
+function updateWordDisplay() {
+	gameDisplayEl.textContent = currentGuess.join(" ");
+}
 
 //Start the Game
 init();

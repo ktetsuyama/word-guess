@@ -1,3 +1,18 @@
+:root {
+  --color-primary-bg: #2f59f4;
+  --color-primary-fg: #fff;
+
+  --color-success-bg: #1ac13c;
+  --color-success-fg: #fff;
+
+  --color-failure-bg: #df1c1c;
+  --color-failure-fg: #fff;
+
+  --color-grey-dk: #666666;
+  --color-grey-md: #aaaaaa;
+  --color-grey-lt: #dedede;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -10,6 +25,21 @@ body {
   min-height: 100vh;
   justify-content: flex-start;
   background: linear-gradient(0deg, rgba(19,41,61,1) 0%, rgba(237,245,249,1) 63%);
+}
+
+
+.hide{
+  display: none !important;
+}
+
+.success {
+  background-color: var(--color-success-bg);
+  color: var(--color-success-fg)
+}
+
+.failure {
+  background-color: var(--color-failure-bg);
+  color: var(--color-failure-fg);
 }
 
 .reset-button {
