@@ -1,183 +1,112 @@
-var wordBlank = document.querySelector(".word-blanks");
-var win = document.querySelector(".win");
-var lose = document.querySelector(".lose");
-var timerElement = document.querySelector(".timer-count");
-var startButton = document.querySelector(".start-button");
+/*
+ 1. Design UI
+    - Draw a picture
+    - Determine where you will display feedback. 
+    - Determine what is clickable, what will recieve key input, change input
+      timers, scroll events, etc
+    - rough in the elements in HTML, style is less important
 
-var chosenWord = "";
-var numBlanks = 0;
-var winCounter = 0;
-var loseCounter = 0;
-var isWin = false;
-var timer;
-var timerCount;
+*/
 
-// Arrays used to create blanks and letters on screen
-var lettersInChosenWord = [];
-var blanksLetters = [];
+/*
+  2. Declare variables: DOM hooks
+    - In the Javascript, create variables for each of the DOM elements that will display feedback
+    - create variables for the elements that will receive input
+    - set each variable to its DOM element like:
+*/
+var winsEl = document.querySelector(".scoreboard__score__value--wins");
+var lossesEl = document.querySelector(".scoreboard__score__value--losses");
+var timerEl = document.querySelector(".gameboard__timer");
+var startGameButtonEl = document.querySelector(".controls__playgame");
+var gameboardEl = document.querySelector(".gameboard");
+var gameresultEl = document.querySelector(".gameboard__result");
+var gameDisplayEl = document.querySelector(".gameboard__display");
+var controlsEl = document.querySelector(".controls");
 
-// Array of words the user will guess
-var words = ["variable","array", "modulus", "object", "function", "string", "boolean"];
+/*
+ 3. Declare variables: state
+    - What are the datq that need to be kept track of? 
+    - Global state variables sometimes emerge while working on event handlers (i.e., it
+      becomes clearer what needs to be tracked across the application)
+    - state variables:
+      "State describes the status of the entire program or an individual
+       object. It could be text, a number, a boolean, or another data type.
 
-// The init function is called when the page loads 
+       It’s a common tool for coordinating code. For example, once you update state, a bunch of different functions can instantly react to that change."
+       https://www.freecodecamp.org/news/state-in-javascript-explained-by-cooking-a-simple-meal-2baf10a787ee/
+    - Does the state variable need to be global (i.e., used by all the event handlers) or does it only need to be local
+      to the event handler?
+*/
+
+var wins = 0;
+var losses = 0;
+var timer = null;
+var timeLeft = 0;
+var currentWordIndex;
+var currentGuess;
+
+/*
+ 4. Declare variables: constants
+    - What are the data the application needs that won't change?
+    - e.g. Math constants, pre-created content (maybe the questions and answers?)
+*/
+
+var kWordList = [
+	"variable",
+	"style",
+	"markdown",
+	"javascript",
+	"node",
+	"webpack",
+	"indexeddb",
+];
+
+var kDuration = 20;
+
+/*
+ 5. Identify events
+    - Based on the variables created in Step 2, create event handlers
+
+      theElement.addeventListener([EVENT TYPE], function(event){
+        // do stuff here...
+      })
+
+    ...where [EVENT TYPE] is "click" or "change" or "keydown" or whatver
+
+    - Identify the things that should happen in the click handlers
+    - Rememember: there is always a page load event. Usually have a function for anything
+      that needs setting up at the beginning, before people interact with the 
+      page. Start the execution of this setup function at the bottom of page
+*/
+
+//Event: Page load
 function init() {
-  getWins();
-  getlosses();
+	console.log("Game loading...");
 }
 
-// The startGame function is called when the start button is clicked
-function startGame() {
-  isWin = false;
-  timerCount = 10;
-  // Prevents start button from being clicked when round is in progress
-  startButton.disabled = true;
-  renderBlanks()
-  startTimer()
+//Event: Click start
+function handleClickStart(event) {
+	console.log("Game started!");
+}
+startGameButtonEl.addEventListener("click", handleClickStart);
+//Event: Timer tick
+function handleTimeTick(event) {
+	console.log("timer ticked!");
 }
 
-// The winGame function is called when the win condition is met
-function winGame() {
-  wordBlank.textContent = "YOU WON!!!🏆 ";
-  winCounter++
-  startButton.disabled = false;
-  setWins()
+//Event: Type letter
+function handleKeyDown(event) {
+	console.log("key pressed: ", event.key);
 }
+document.addEventListener("keydown", handleKeyDown);
 
-// The loseGame function is called when timer reaches 0
-function loseGame() {
-  wordBlank.textContent = "GAME OVER";
-  loseCounter++
-  startButton.disabled = false;
-  setLosses()
-}
+//Event: Game ends
+function handleGameEnds() {}
+/*
+ 6. Refactor
+    - identify tasks that can be broken into their own functions, outside the event handlers
+    - Are there tasks that more than one event handler share?
+*/
 
-// The setTimer function starts and stops the timer and triggers winGame() and loseGame()
-function startTimer() {
-  // Sets timer
-  timer = setInterval(function() {
-    timerCount--;
-    timerElement.textContent = timerCount;
-    if (timerCount >= 0) {
-      // Tests if win condition is met
-      if (isWin && timerCount > 0) {
-        // Clears interval and stops timer
-        clearInterval(timer);
-        winGame();
-      }
-    }
-    // Tests if time has run out
-    if (timerCount === 0) {
-      // Clears interval
-      clearInterval(timer);
-      loseGame();
-    }
-  }, 1000);
-}
-
-// Creates blanks on screen
-function renderBlanks() {
-  // Randomly picks word from words array
-  chosenWord = words[Math.floor(Math.random() * words.length)];
-  lettersInChosenWord = chosenWord.split("");
-  numBlanks = lettersInChosenWord.length;
-  blanksLetters = []
-  // Uses loop to push blanks to blankLetters array
-  for (var i = 0; i < numBlanks; i++) {
-    blanksLetters.push("_");
-  }
-  // Converts blankLetters array into a string and renders it on the screen
-  wordBlank.textContent = blanksLetters.join(" ")
-}
-
-// Updates win count on screen and sets win count to client storage
-function setWins() {
-  win.textContent = winCounter;
-  localStorage.setItem("winCount", winCounter);
-}
-
-// Updates lose count on screen and sets lose count to client storage
-function setLosses() {
-  lose.textContent = loseCounter;
-  localStorage.setItem("loseCount", loseCounter);
-}
-
-// These functions are used by init
-function getWins() {
-  // Get stored value from client storage, if it exists
-  var storedWins = localStorage.getItem("winCount");
-  // If stored value doesn't exist, set counter to 0
-  if (storedWins === null) {
-    winCounter = 0;
-  } else {
-    // If a value is retrieved from client storage set the winCounter to that value
-    winCounter = storedWins;
-  }
-  //Render win count to page
-  win.textContent = winCounter;
-}
-
-function getlosses() {
-  var storedLosses = localStorage.getItem("loseCount");
-  if (storedLosses === null) {
-    loseCounter = 0;
-  } else {
-    loseCounter = storedLosses;
-  }
-  lose.textContent = loseCounter;
-}
-
-function checkWin() {
-  // If the word equals the blankLetters array when converted to string, set isWin to true
-  if (chosenWord === blanksLetters.join("")) {
-    // This value is used in the timer function to test if win condition is met
-    isWin = true;
-  }
-}
-
-// Tests if guessed letter is in word and renders it to the screen.
-function checkLetters(letter) {
-  for (var i = 0; i < numBlanks; i++) {
-    if (chosenWord[i] === letter) {
-      blanksLetters[i] = letter;
-    }
-
-    wordBlank.textContent = blanksLetters.join(" ");
-  }
-}
-
-// Attach event listener to document to listen for key event
-document.addEventListener("keydown", function(event) {
-  // If the count is zero, exit function
-  if (timerCount === 0) {
-    return;
-  }
-  // Convert all keys to lower case
-  var key = event.key.toLowerCase();
-  var alphabetNumericCharacters = "abcdefghijklmnopqrstuvwxyz0123456789 ".split("");
-  // Test if key pushed is letter
-  if (alphabetNumericCharacters.includes(key)) {
-    var letterGuessed = event.key;
-    checkLetters(letterGuessed)
-    checkWin();
-  }
-});
-
-// Attach event listener to start button to call startGame function on click
-startButton.addEventListener("click", startGame);
-
-// Calls init() so that it fires when page opened
+//Start the Game
 init();
-
-// Bonus: Add reset button
-var resetButton = document.querySelector(".reset-button");
-
-function resetGame() {
-  // Resets win and loss counts
-  winCounter = 0;
-  loseCounter = 0;
-  // Renders win and loss counts and sets them into client storage
-  setWins()
-  setLosses()
-}
-// Attaches event listener to button
-resetButton.addEventListener("click", resetGame);
