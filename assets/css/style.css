@@ -42,13 +42,6 @@ body {
   color: var(--color-failure-fg);
 }
 
-.reset-button {
-  font-size: 16px;
-  height: 30px;
-  line-height: 8px;
-  margin-top: 20px;
-}
-
 .win-loss-container {
   display: flex;
   justify-content: space-between;
@@ -69,8 +62,12 @@ button {
   transition-duration: 0.15s;
   transition-property: background-color;
   transition-timing-function: linear;
-  margin-top: 0.6em;
-}
+  }
+  .controls {
+    display: flex;
+    justify-content: center;
+    width: auto;
+  }
 
 header {
   padding: 40px;
@@ -94,11 +91,6 @@ section {
   border-radius: 8px;
 }
 
-.word-guess {
-  width: 55vw;
-  height: 400px;
-}
-
 .results {
   width: 30vw;
   height: 400px;
@@ -114,26 +106,6 @@ section {
   padding: 20px;
 }
 
-.word-blanks {
-  line-height: 360px;
-}
-
-.large-font {
-  font-size: 3.5em;
-  text-align:center;
-}
-
-.timer {
-  height: 240px;
-  padding: 10px;
-  background: #13293d;
-  color: #fff;
-  text-align: center;
-}
-
-.timer-text {
-  padding: 55px;
-}
 
 @media screen and (max-width: 1183px) {
   main {
