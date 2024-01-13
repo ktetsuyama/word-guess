@@ -42,33 +42,6 @@ body {
   color: var(--color-failure-fg);
 }
 
-.win-loss-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 16px;
-}
-
-button {
-  background: radial-gradient(circle, rgba(240,230,140,1) 0%, rgba(187,96,33,0.9542191876750701) 100%);
-  border-radius: 8px;
-  color: #13293d;
-  cursor: pointer;
-  font-size: 2em;
-  letter-spacing: 0.21px;
-  line-height: 16px;
-  max-width: 255px;
-  padding: 20px 52px;
-  text-align: center;
-  transition-duration: 0.15s;
-  transition-property: background-color;
-  transition-timing-function: linear;
-  }
-  .controls {
-    display: flex;
-    justify-content: center;
-    width: auto;
-  }
-
 header {
   padding: 40px;
   text-align: center;
@@ -91,12 +64,9 @@ section {
   border-radius: 8px;
 }
 
-.results {
-  width: 30vw;
-  height: 400px;
-}
-
-.card {
+.scoreboard {
+  display: flex;
+  justify-content: space-evenly;
   background: radial-gradient(circle, rgba(240,230,140,1) 0%, rgba(187,124,33,0.604079131652661) 100%);
   border: 1px solid #eceff1;
   border-radius: 8px;
@@ -106,15 +76,61 @@ section {
   padding: 20px;
 }
 
+.gameboard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
+.gameboard__info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+}
+
+.gameboard__result {
+  display:flex;
+  width: 100%;
+  height: 40px;
+  padding: 32px;
+  align-items: center;
+}
+
+.gameboard__display {
+  font-size: 70px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  width: auto;
+}
+
+button {
+  background: radial-gradient(circle, rgba(240,230,140,1) 0%, rgba(187,96,33,0.9542191876750701) 100%);
+  border-radius: 8px;
+  color: #13293d;
+  cursor: pointer;
+  font-size: 2em;
+  letter-spacing: 0.21px;
+  line-height: 16px;
+  max-width: 255px;
+  padding: 20px 52px;
+  text-align: center;
+  transition-duration: 0.15s;
+  transition-property: background-color;
+  transition-timing-function: linear;
+  }
+
+  .gameboard__timer {
+    margin: 2rem 0;
+    font-size: 25px;
+  }
 @media screen and (max-width: 1183px) {
   main {
     flex-direction: column;
-  }
-
-  .word-guess,
-  .results {
-    width: 90vw;
   }
 
   section {
@@ -125,16 +141,6 @@ section {
 }
 
 @media screen and (max-width: 504px) {
-  .large-font {
-    font-size: 2em;
-  }
-
-  .reset-button {
-    font-size: 12px;
-    width: 20ox;
-    
-  }
-
   .timer {
     height: 200px;
   }
